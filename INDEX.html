@@ -29,7 +29,9 @@
 
 /* Hide the button when printing */
 @media print {
-  #printButton {
+  #printButton,
+  #fileInputButton,
+  #clearButton {
     display: none;
   }
 }
@@ -40,42 +42,94 @@
   <div class="content">
     <div class="row">
       <div class="column">
-        <img data-image-src="20240517_155719.jpg">
-        <img data-image-src="20240517_155719.jpg">
+        <img id="image1" data-image-src="">
+        <img id="image2" data-image-src="">
       </div>
       <div class="column">
-        <img data-image-src="20240517_155719.jpg">
-        <img data-image-src="20240517_155719.jpg">
+        <img id="image3" data-image-src="">
+        <img id="image4" data-image-src="">
       </div>
       <div class="column">
-        <img data-image-src="20240517_155719.jpg">
-        <img data-image-src="20240517_155719x.jpg">
+        <img id="image5" data-image-src="">
+        <img id="image6" data-image-src="">
       </div>
     </div>
   </div>
 
   <button id="printButton">Print Content</button>
+  <button id="fileInputButton">Select Image</button>
+  <button id="clearButton">Clear Images</button>
 
   <script>
-    const imagePath = "20240517_155719.jpg"; // Replace with your actual image path
+    // Function to update image source based on selected file
+    function updateImage(imageElement, file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imageElement.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
-    // Get all images with the data-image-src attribute
-    const images = document.querySelectorAll('img[data-image-src]');
+    // Function to clear all image sources
+    function clearImages() {
+      const images = document.querySelectorAll('.content img');
+      images.forEach(image => {
+        image.src = '';
+      });
+    }
 
-    // Loop through each image and set the src attribute using the variable
-    images.forEach(image => {
-      image.src = imagePath;
-    });
+    let imagePath = ""; // User-provided image path (initially empty)
+
+    // Get all image elements
+    const images = document.querySelectorAll('img');
+
+    // Set initial image source (optional, remove if not needed)
+    // images.forEach(image => {
+    //   image.src = imagePath;
+    // });
 
     // Get the print button element
     const printButton = document.getElementById('printButton');
 
-    // Add click event listener to the button
+    // Add click event listener to the print button
     printButton.addEventListener('click', () => {
       const contentDiv = document.querySelector('.content');
       contentDiv.focus(); // Set focus on the content div for printing
       window.print();
     });
+
+    // Get the file input button element
+    const fileInputButton = document.getElementById('fileInputButton');
+
+    // Add click event listener to the file input button
+    fileInputButton.addEventListener('click', () => {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*'; // Accept only image files
+
+      fileInput.onchange = function(e) {
+        const selectedFiles = e.target.files; // Get all selected files
+
+        if (selectedFiles.length > 0) {
+          const imagePath = URL.createObjectURL(selectedFiles[0]); // Use the first selected file
+
+          // Update all image slots with the selected image
+          images.forEach(image => {
+            updateImage(image, selectedFiles[0]);
+          });
+        } else {
+          alert('No image selected.');
+        }
+      };
+
+      fileInput.click(); // Simulate a click on the hidden file input element
+    });
+
+    // Get the clear button element
+    const clearButton = document.getElementById('clearButton');
+
+    // Add click event listener to the clear button
+    clearButton.addEventListener('click', clearImages);
   </script>
 </body>
 
