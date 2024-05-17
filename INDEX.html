@@ -26,6 +26,13 @@
   padding-left: 10%;
   height: auto; /* Set a specific height for the images */
 }
+
+/* Hide the button when printing */
+@media print {
+  #printButton {
+    display: none;
+  }
+}
 </style>
 </head>
 
@@ -45,10 +52,9 @@
         <img data-image-src="20240517_155719x.jpg">
       </div>
     </div>
-    <button id="printButton">Print Content</button>
   </div>
 
- 
+  <button id="printButton">Print Content</button>
 
   <script>
     const imagePath = "20240517_155719.jpg"; // Replace with your actual image path
